@@ -1,0 +1,31 @@
+:root{
+  --body-bgc: #fafbfe;
+  --header-bgc: #313A46;
+  --header-color: #98a6ad;
+  --module-bgc: #fff;
+}
+
+body{
+  background-color: var(--body-bgc);
+}
+.main-header-container{
+  background-color: var(--header-bgc);
+  height: 80px;
+  color: var(--header-color);
+  display: flex;
+  align-items: center;
+}
+.main-header-container a{
+  color: var(--header-color);
+}
+
+
+.module{
+  background-color: var(--module-bgc);
+  border-radius: 5px;
+}
+.teams-list{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
