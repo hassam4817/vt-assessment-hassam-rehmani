@@ -1,15 +1,16 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
   return (
-    <div>
-      <h1>Welcome to your dashboard</h1>
-      <ul>
-        <li><Link to="/teams">Teams</Link></li>
-        <li><Link to="/reports">Reports</Link></li>
-      </ul>
-    </div>
+    <>
+      <div className="py-5">
+        <h1 className="text-center">Welcome to your dashboard, $user</h1>
+      </div>
+      <div className="text-center">
+        <Link to="/teams" className="btn btn-primary mx-3">Teams</Link>
+        <Link to="/reports" className="btn btn-primary mx-3">Reports</Link>
+      </div>
+    </>
   );
 };
 
