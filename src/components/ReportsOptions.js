@@ -11,7 +11,7 @@ const ReportsOptions = ({
 }) => {
   return (
     <Row className="mb-5 mt-3">
-      <Col xs={"auto"}>
+      <Col md={"auto"} className="mb-3">
         <InputGroup>
           <InputGroup.Text>Showing report for the last</InputGroup.Text>
           <Form.Control
@@ -22,7 +22,7 @@ const ReportsOptions = ({
           />
         </InputGroup>
       </Col>
-      <Col xs={"auto"}>
+      <Col md={"auto"}  className="mb-3">
         <Form.Select
           defaultValue={reportTimeframe}
           onChange={(e) => setReportTimeframe(e.target.value)}
@@ -31,10 +31,10 @@ const ReportsOptions = ({
           <option value="weeks">weeks</option>
         </Form.Select>
       </Col>
-      <Col>
+      <Col  className="mb-3">
         <Button variant="outline-primary" onClick={requestNewReport}>New Report</Button>
       </Col>
-      <Col xs={"auto"}>
+      <Col md={"auto"}  className="mb-3">
         <InputGroup>
           <InputGroup.Text>View as</InputGroup.Text>
           <Form.Select
