@@ -1,17 +1,22 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import _ from "lodash";
 import axios from "axios";
-import Report from "../components/Report";
+
+import ReportsOptions from "../components/ReportsOptions";
+import ReportsTable from "../components/ReportsTable";
+import ReportsCards from "../components/ReportsCards";
+
 
 const ReportsPage = () => {
-  const [reportNumber, setReportNumber] = useState(6);
-  const [reportOption, setReportOption] = useState("months");
+  const [reportAmount, setReportAmount] = useState(6);
+  const [reportTimeframe, setReportTimeframe] = useState("months");
   const [reportData, setReportData] = useState([]);
   const [currentReportOption, setCurrentReportOption] = useState("months");
+  const [viewType, setViewType] = useState("table");
 
   const formatData = (fullData) => {
     // console.log(fullData);
-    const chunked = _.chunk(fullData, reportNumber + 1);
+    const chunked = _.chunk(fullData, reportAmount + 1);
     // console.log(chunked);
     const formattedData = chunked.map((element) => {
       const generalData = { ...element[element.length - 1] };
@@ -50,38 +55,38 @@ const ReportsPage = () => {
   };
 
   const requestNewReport = () => {
-    getReports(reportNumber, reportOption);
+    getReports(reportAmount, reportTimeframe);
   };
 
   useEffect(() => {
-    getReports(reportNumber, reportOption);
+    getReports(reportAmount, reportTimeframe);
   }, []);
 
   return (
-    <div>
-      <h2>Welcome to the reports page</h2>
-      <div>
-        <p>Showing report for the last</p>
-        <input
-          type="number"
-          defaultValue={reportNumber}
-          onChange={(e) => setReportNumber(Number(e.target.value))}
+    <div className="py-5">
+      <h2 className="text-center">My reports page</h2>
+      <div className="module p-3 my-5">
+        <ReportsOptions
+          viewType={viewType}
+          setViewType={setViewType}
+          reportAmount={reportAmount}
+          setReportAmount={setReportAmount}
+          reportTimeframe={reportTimeframe}
+          setReportTimeframe={setReportTimeframe}
+          requestNewReport={requestNewReport}
         />
-        <select
-          name="reportOption"
-          id="reportOption"
-          defaultValue={reportOption}
-          onChange={(e) => setReportOption(e.target.value)}
-        >
-          <option value="weeks">weeks</option>
-          <option value="months">months</option>
-        </select>
-        <button onClick={requestNewReport}>Report</button>
+        {viewType === "table" ? (
+          <ReportsTable
+            reportsData={reportData}
+            currentReportOption={currentReportOption}
+          />
+        ) : (
+          <ReportsCards
+            reportsData={reportData}
+            currentReportOption={currentReportOption}
+          />
+        )}
       </div>
-      <Report
-        reportData={reportData}
-        currentReportOption={currentReportOption}
-      />
     </div>
   );
 };
