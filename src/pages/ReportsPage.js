@@ -1,65 +1,39 @@
 import { useState, useEffect } from "react";
-import _ from "lodash";
-import axios from "axios";
 
 import ReportsOptions from "../components/ReportsOptions";
 import ReportsTable from "../components/ReportsTable";
 import ReportsCards from "../components/ReportsCards";
 
+import { getReports } from "../calls/getReports";
+import { formatReportsData } from "../utilities/reportsData";
 
 const ReportsPage = () => {
-  const [reportAmount, setReportAmount] = useState(6);
-  const [reportTimeframe, setReportTimeframe] = useState("months");
+  const defaults = {
+    amount: 6,
+    type: "months",
+  };
+
   const [reportData, setReportData] = useState([]);
-  const [currentReportOption, setCurrentReportOption] = useState("months");
   const [viewType, setViewType] = useState("table");
+  const [currentType, setCurrentType] = useState(defaults.type);
 
-  const formatData = (fullData) => {
-    // console.log(fullData);
-    const chunked = _.chunk(fullData, reportAmount + 1);
-    // console.log(chunked);
-    const formattedData = chunked.map((element) => {
-      const generalData = { ...element[element.length - 1] };
-      generalData.reports = element.slice(0, element.length - 1);
-      return generalData;
-    });
+  const [inputValues, setInputValues] = useState({
+    amount: defaults.amount,
+    type: defaults.type,
+  });
 
-    // console.log(formattedData);
-    return formattedData;
-  };
-
-  const getReports = async (number, option) => {
-    if (option === "months") {
-      try {
-        const response = await axios.get(
-          `http://stubber.test.visiblethread.com/scans/monthly/${number}`
-        );
-        setReportData(formatData(response.data));
-        setCurrentReportOption("months");
-      } catch (err) {
-        console.log(err);
-      }
-    } else if (option === "weeks") {
-      try {
-        const response = await axios.get(
-          `http://stubber.test.visiblethread.com/scans/weekly/${number}`
-        );
-        setReportData(formatData(response.data));
-        setCurrentReportOption("weeks");
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      console.log("invalid option value");
-    }
-  };
 
   const requestNewReport = () => {
-    getReports(reportAmount, reportTimeframe);
+    getReports(inputValues.amount, inputValues.type)
+      .then((response) => {
+        setReportData(formatReportsData(response.data, inputValues.amount));
+        setCurrentType(inputValues.type);
+      })
+      .catch((err) => console.error(err));
   };
 
   useEffect(() => {
-    getReports(reportAmount, reportTimeframe);
+    requestNewReport();
   }, []);
 
   return (
@@ -69,22 +43,14 @@ const ReportsPage = () => {
         <ReportsOptions
           viewType={viewType}
           setViewType={setViewType}
-          reportAmount={reportAmount}
-          setReportAmount={setReportAmount}
-          reportTimeframe={reportTimeframe}
-          setReportTimeframe={setReportTimeframe}
           requestNewReport={requestNewReport}
+          inputValues={inputValues}
+          setInputValues={setInputValues}
         />
         {viewType === "table" ? (
-          <ReportsTable
-            reportsData={reportData}
-            currentReportOption={currentReportOption}
-          />
+          <ReportsTable reportsData={reportData} currentType={currentType} />
         ) : (
-          <ReportsCards
-            reportsData={reportData}
-            currentReportOption={currentReportOption}
-          />
+          <ReportsCards reportsData={reportData} currentType={currentType} />
         )}
       </div>
     </div>
