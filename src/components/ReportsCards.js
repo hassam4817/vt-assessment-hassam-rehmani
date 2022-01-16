@@ -4,13 +4,13 @@ import ReportsWeeklyModal from "./ReportsWeeklyModal";
 import { monthsMap } from "../utilities/months";
 import axios from "axios";
 
-const ReportsCards = ({ reportsData, currentReportOption }) => {
+const ReportsCards = ({ reportsData, currentType }) => {
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState([{}]);
 
   const formatDate = (date) => {
     const month = date.split("-")[1];
-    if (currentReportOption === "weeks") {
+    if (currentType === "weeks") {
       return `${monthsMap[Number(month)]} ${date.split("-")[2]}`;
     }
     return monthsMap[Number(month)];
@@ -29,15 +29,15 @@ const ReportsCards = ({ reportsData, currentReportOption }) => {
   };
 
   const getScans = (item) => {
-    if (currentReportOption === "months") {
+    if (currentType === "months") {
       return item.scansAMonth;
-    } else if (currentReportOption === "weeks") {
+    } else if (currentType === "weeks") {
       return item.scansAWeek;
     }
   };
 
   const handleModal = (team, date) => {
-    if (currentReportOption === "months") {
+    if (currentType === "months") {
       setShowModal(true);
       getWeeklyScans(team, date);
     }
@@ -59,7 +59,7 @@ const ReportsCards = ({ reportsData, currentReportOption }) => {
                     key={index}
                     onClick={() => handleModal(report.teamName, report.date)}
                     style={
-                      currentReportOption === "months"
+                      currentType === "months"
                         ? { cursor: "pointer" }
                         : { cursor: "inherit" }
                     }
