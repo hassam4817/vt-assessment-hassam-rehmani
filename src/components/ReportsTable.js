@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
 import ReportsWeeklyModal from "./ReportsWeeklyModal";
 import { monthsMap } from "../utilities/months";
-import axios from "axios";
+import { getWeeklyScans } from "../calls/getReports";
 
-const ReportsTable = ({ reportsData, currentReportOption }) => {
+const ReportsTable = ({ reportsData, currentType }) => {
   const [headings, setHeadings] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState([{}]);
@@ -14,9 +14,9 @@ const ReportsTable = ({ reportsData, currentReportOption }) => {
     data[0].reports.forEach((element) => {
       const month = Number(element.date.split("-")[1]);
       const day = Number(element.date.split("-")[2]);
-      if (currentReportOption === "months") {
+      if (currentType === "months") {
         months.unshift(monthsMap[month]);
-      } else if (currentReportOption === "weeks") {
+      } else if (currentType === "weeks") {
         months.unshift(`${monthsMap[month]} ${day}`);
       }
     });
@@ -24,36 +24,26 @@ const ReportsTable = ({ reportsData, currentReportOption }) => {
     return list;
   };
 
-  const getWeeklyScans = async (team, date) => {
-    try {
-      const response = await axios.get(
-        `http://stubber.test.visiblethread.com/scans/${team}/${date}`
-      );
-      // console.log(response.data);
-      setModalData(response.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const handleModal = (team, date) => {
-    if (currentReportOption === "months") {
+    if (currentType === "months") {
+      getWeeklyScans(team, date)
+        .then((response) => setModalData(response.data))
+        .catch((err) => console.error(err));
       setShowModal(true);
-      getWeeklyScans(team, date);
     }
   };
 
   const getScans = (item) => {
-    if (currentReportOption === "months") {
+    if (currentType === "months") {
       return item.scansAMonth;
-    } else if (currentReportOption === "weeks") {
+    } else if (currentType === "weeks") {
       return item.scansAWeek;
     }
   };
 
   useEffect(() => {
     if (reportsData.length > 0) setHeadings(generateTableHeadings(reportsData));
-  }, [reportsData, currentReportOption]);
+  }, [reportsData, currentType]);
 
   return (
     <>
@@ -78,7 +68,7 @@ const ReportsTable = ({ reportsData, currentReportOption }) => {
                     key={index}
                     onClick={() => handleModal(report.teamName, report.date)}
                     style={
-                      currentReportOption === "months"
+                      currentType === "months"
                         ? { cursor: "pointer" }
                         : { cursor: "inherit" }
                     }
