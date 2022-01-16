@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import TeamsCreateNew from "../components/TeamsCreateNew";
 import TeamsList from "../components/TeamsList";
